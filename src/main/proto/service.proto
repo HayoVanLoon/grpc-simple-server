@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package hayovanloon.grpc.simpleserver;
+
+option java_package = "nl.hayovanloon.grpc.simpleserver";
+option java_multiple_files = true;
+
+// A service for performing simple integer arithmetic.
+service IntegerArithmetic {
+
+    // Performs the requested calculation.
+    rpc MakeCalculation (CalculationRequest) returns (CalculationResponse) {
+    }
+}
+
+// Specifies the calculation request.
+message CalculationRequest {
+
+    // The calculation that should be performed.
+    IntOperation operation = 1;
+}
+
+// Specifies the calculation response.
+message CalculationResponse {
+
+    // The request echo
+    CalculationRequest request = 1;
+
+    // The result of the calculation; empty when errors occured.
+    CalculationResult result = 2;
+
+    // Errors encountered while processing the request.
+    repeated Error errors = 3;
+}
+
+message CalculationResult {
+    IntExpression expression = 1;
+}
+
+// An integer operation.
+message IntOperation {
+
+    // Operation type; aka how to combine the operands.
+    Type type = 1;
+
+    enum Type {
+        UNKNOWN = 0;
+        ADDITION = 1;
+        SUBTRACTION = 2;
+        MULTIPLICATION = 3;
+        DIVISION = 4;
+        MODULO = 5;
+        POWER = 6;
+    }
+
+    // First operand
+    IntExpression op1 = 2;
+
+    // Second operand
+    IntExpression op2 = 3;
+}
+
+// An integer expression that is either a concrete value or an operation to 
+// obtain a concrete value.
+message IntExpression {
+    oneof value {
+        int64 number = 1;
+        IntOperation operation = 2;
+    }
+}
+
+// Error message container
+message Error {
+
+    // Error code
+    int32 code = 1;
+
+    // Error message
+    string message = 2;
+}
+
