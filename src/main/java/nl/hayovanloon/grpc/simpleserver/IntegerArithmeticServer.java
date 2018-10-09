@@ -96,10 +96,6 @@ public class IntegerArithmeticServer {
       final long result;
       final IntOperation.Type type = operation.getType();
 
-      if (type == null) {
-        throw new IllegalArgumentException("no type specified on " + operation);
-      }
-
       switch (type) {
         case ADDITION:
           result = add(eval(operation.getOp1()), eval(operation.getOp2()));
@@ -120,7 +116,7 @@ public class IntegerArithmeticServer {
           result = power(eval(operation.getOp1()), eval(operation.getOp2()));
           break;
         default:
-          throw new UnsupportedOperationException(operation.getType().name());
+          throw new IllegalArgumentException(operation.getType().name());
       }
 
       return IntExpression.newBuilder().setNumber(result).build();

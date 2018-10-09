@@ -16,7 +16,6 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class IntegerArithmeticServerTest {
 
-  private String serverName;
   private IntegerArithmeticBlockingStub blockingStub;
 
   @Rule
@@ -24,6 +23,7 @@ public class IntegerArithmeticServerTest {
 
   @Before
   public void setUp() throws Exception {
+    String serverName = InProcessServerBuilder.generateName();
     // Create a server, add service, start, and register for automatic graceful shutdown.
     grpcCleanup.register(InProcessServerBuilder
         .forName(serverName).directExecutor().addService(new IntegerArithmeticImpl()).build().start());
@@ -35,7 +35,7 @@ public class IntegerArithmeticServerTest {
   }
 
   @Test
-  public void makeCalculation_happy() throws Exception {
+  public void makeCalculation_happy() {
     CalculationRequest request = CalculationRequest.newBuilder()
         .setOperation(IntOperation.newBuilder()
             .setType(IntOperation.Type.ADDITION)
@@ -145,7 +145,7 @@ public class IntegerArithmeticServerTest {
 
     CalculationResponse response = blockingStub.makeCalculation(request);
 
-    assertEquals(11, response.getResult().getExpression().getNumber());
+    assertEquals(9, response.getResult().getExpression().getNumber());
   }
 
   /**
