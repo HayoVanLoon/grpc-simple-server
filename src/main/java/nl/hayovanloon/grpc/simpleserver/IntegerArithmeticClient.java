@@ -29,11 +29,7 @@ public class IntegerArithmeticClient implements AutoCloseable {
     channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
   }
 
-  public CalculationResponse makeCalculation(IntOperation operation) {
-    final CalculationRequest request = CalculationRequest.newBuilder()
-        .setOperation(operation)
-        .build();
-
+  public CalculationResponse makeCalculation(CalculationRequest request) {
     return blockingStub.makeCalculation(request);
   }
 }
