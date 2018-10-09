@@ -94,8 +94,13 @@ public class IntegerArithmeticServer {
      */
     static IntExpression calculate(IntOperation operation) {
       final long result;
+      final IntOperation.Type type = operation.getType();
 
-      switch (operation.getType()) {
+      if (type == null) {
+        throw new IllegalArgumentException("no type specified on " + operation);
+      }
+
+      switch (type) {
         case ADDITION:
           result = add(eval(operation.getOp1()), eval(operation.getOp2()));
           break;
@@ -180,19 +185,30 @@ public class IntegerArithmeticServer {
       final CalculationResponse.Builder resp = CalculationResponse.newBuilder()
           .setRequest(request);
 
-      try {
-        final IntExpression outcome = calculate(request.getOperation());
-        resp
-            .setResult(CalculationResult.newBuilder()
-                .setExpression(outcome));
-        LOG.info("calculated a result: " + outcome);
-      } catch (ArithmeticException e) {
-        LOG.info("ArithmeticException occurred: " + e.getMessage());
+      if (request.getOperation() == null) {
         resp
             .addErrors(Error.newBuilder()
-                .setCode(1)
-                .setMessage(e.getMessage())
-                .build());
+                .setCode(3)
+                .setMessage("no operation specified"));
+      } else {
+        try {
+          final IntExpression outcome = calculate(request.getOperation());
+          resp
+              .setResult(CalculationResult.newBuilder()
+                  .setExpression(outcome));
+          LOG.info("calculated a result: " + outcome);
+        } catch (ArithmeticException e) {
+          LOG.info("ArithmeticException occurred: " + e.getMessage());
+          resp
+              .addErrors(Error.newBuilder()
+                  .setCode(1)
+                  .setMessage(e.getMessage()));
+        } catch (IllegalArgumentException e) {
+          resp
+              .addErrors(Error.newBuilder()
+                  .setCode(2)
+                  .setMessage(e.getMessage()));
+        }
       }
 
       responseObserver.onNext(resp.build());
