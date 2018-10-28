@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class IntegerArithmeticServer {
 
-  static final int DEFAULT_PORT = 8081;
+  static final int DEFAULT_PORT = 8080;
   private static final Logger LOG =
       Logger.getLogger(IntegerArithmeticServer.class.getName());
   private final int port;

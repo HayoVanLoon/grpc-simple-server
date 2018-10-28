@@ -35,3 +35,8 @@ Package the server into a JAR
 ```bash
 make dist
 ```
+
+And build a docker image (based on openjdk:8-alpine) listening on 8080
+```bash
+make build-docker
+```

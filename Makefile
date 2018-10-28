@@ -1,7 +1,7 @@
 
 SERVER_CLASS = nl.hayovanloon.grpc.simpleserver.IntegerArithmeticServer
 CLIENT_CLASS = nl.hayovanloon.grpc.simpleserver.ClientMain
-PORT = 8081
+PORT = 8080
 HOST = localhost
 
 .PHONY: clean
@@ -18,8 +18,11 @@ test:
 run: build
 	mvn exec:java -Dexec.mainClass=$(SERVER_CLASS) -Dexec.args="$(PORT)"
 
-test-call: build
+test-call:
 	mvn exec:java -Dexec.mainClass=$(CLIENT_CLASS) -Dexec.args="$(PORT) $(HOST)"
 
-dist: clean
+dist: test
 	mvn assembly:single
+
+build-docker: dist
+	docker build -t arithmeticserver .
